@@ -4,22 +4,14 @@ Map Editor for Rocket League
 This python script allows you to edit your Epic Games version of Rocket League Lab Maps to use custom training maps, gotten from Steam.
 
 # Version 0.0.0
-This program uses Semantic Versioning: http://semver.org
+This program uses [Semantic Versioning](http://semver.org)
 
 # TODO
-`#=== TODO ===`
-
-`# [ TODO ] - Write python Tkinter interface`
-
-`# [ TODO ] - Code backup logic to enable restore of original maps`
-
-`# [ TODO ] - Code replace logic to allow UPK file choosing`
-
-`# [ TODO ] - Code replace logic to allow ZIP file choosing`
-
-`#===========`
-
-`# [ work ] - v0.0.0`
+ - [ ] - Write python Tkinter interface
+ - [ ] - Code backup logic to enable restore of original maps
+ - [ ] - Code replace logic to allow UPK file choosing
+ - [ ] - Code replace logic to allow ZIP file choosing
+ - [ ] - Release: v0.0.0
 
 # Disclaimer
 This software comes with absolutely no warranty. Using this software as intended will replace files in your Rocket League installation directory, which has the potential to break your installation. Please be aware of this before using it. That said, many people use the method that this program uses to play custom maps, so it may be relatively safe to use.
@@ -33,7 +25,7 @@ If you do not, or are not sure, you should be able to download the merl.exe from
 
 # Using merl
 ## Before you Run
-You have to download the map packs you want from Steam before using this. You can use go here: https://steamcommunity.com/app/252950/workshop/ to find workshop maps that you'd like to try out, and the copy the URL from the address bar and go here: https://steamworkshopdownloader.io/ to download. Just paste the URL from the workshop page and click Download.
+You have to download the map packs you want from Steam before using this. You can use [Steam Workshops](https://steamcommunity.com/app/252950/workshop/) to find workshop maps that you'd like to try out, and the copy the URL from the address bar and go to the [Steam Workshop Downloader](https://steamworkshopdownloader.io/) to download. Just paste the URL from the workshop page and click Download.
 
 Remember where you save the file; most browsers place the file into `C:\Users\<user>\Downloads`
 
@@ -53,7 +45,7 @@ To uninstall merl, you can just delete the script or exe you downloaded.
 
 # Troubleshooting / Issues
 1. Help! my map isn't working anymore!
-- Rocket League probably updated. Just open merl and click Replace to reset your maps.
+  - Rocket League probably updated. Just open merl and click Replace to reset your maps.
 2. not sure what else could go wrong?
 
 # License
