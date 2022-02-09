@@ -40,6 +40,9 @@ When done, click Replace and merl will replace the selected map(s) with the chos
 
 NOTE: when you click Replace, merl will attempt to backup the original map files before replacing them. It does this by moving the original file name to the same name with a .merl extention. IF YOU HAVE already replaced map files, it will "accidentally" backup those replaced files instead - if you click Revert for a map where this happened, it will revert back to those replaced maps, not the original one.
 
+# Files
+merl creates a small tracker text file linking the maps to the replacement files in the same directory it is located called `mapper.txt`
+
 # Uninstalling
 To uninstall merl, you can just delete the script or exe you downloaded.
 
