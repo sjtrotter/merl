@@ -8,11 +8,17 @@ This program uses Semantic Versioning: http://semver.org
 
 # TODO
 `#=== TODO ===`
+
 `# [ TODO ] - Write python Tkinter interface`
+
 `# [ TODO ] - Code backup logic to enable restore of original maps`
+
 `# [ TODO ] - Code replace logic to allow UPK file choosing`
+
 `# [ TODO ] - Code replace logic to allow ZIP file choosing`
+
 `#===========`
+
 `# [ work ] - v0.0.0`
 
 # Disclaimer
