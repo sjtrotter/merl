@@ -1,2 +1,56 @@
 # merl
 Map Editor for Rocket League
+
+This python script allows you to edit your Epic Games version of Rocket League Lab Maps to use custom training maps, gotten from Steam.
+
+# Version 0.0.0
+This program uses Semantic Versioning: http://semver.org
+
+# TODO
+```
+#=== TODO ===
+# [ TODO ] - Write python Tkinter interface to include install dir, maps, replacement choosers, revert buttons, and replace button
+# [ TODO ] - Code backup logic to enable restore of original maps
+# [ TODO ] - Code replace logic to allow UPK file choosing
+# [ TODO ] - Code replace logic to allow ZIP file choosing
+#===========
+# [ work ] - v0.0.0
+```
+
+# Disclaimer
+This software comes with absolutely no warranty. Using this software as intended will replace files in your Rocket League installation directory, which has the potential to break your installation. Please be aware of this before using it. That said, many people use the method that this program uses to play custom maps, so it may be relatively safe to use.
+
+If your install of Rocket League quits working after using this program, you should be able to fix it by opening your Epic Games Launcher and going to your Library, clicking the three-dots next to Rocket League and then clicking Verify.
+
+# Installation
+If you have python installed on your computer, you should be able to download the source script and run it as-is.
+
+If you do not, or are not sure, you should be able to download the merl.exe from the dist folder and run it.
+
+# Using merl
+## Before you Run
+You have to download the map packs you want from Steam before using this. You can use go here: https://steamcommunity.com/app/252950/workshop/ to find workshop maps that you'd like to try out, and the copy the URL from the address bar and go here: https://steamworkshopdownloader.io/ to download. Just paste the URL from the workshop page and click Download.
+
+Remember where you save the file; most browsers place the file into `C:\Users\<user>\Downloads`
+
+## Running merl
+Run the script (or exe). You'll be presented with a directory selector and a list of maps you can edit, with file choosers below them (and a Revert button for each one).
+
+Use the directory selector to find your Rocket League installation directory. Usually it is located in `C:\Program Files\Epic Games\rocketleague` but you may have installed it elsewhere, possibly.
+
+Once done, choose a map to edit. Use the file chooser to select the downloaded Steam map ZIP file.
+
+When done, click Replace and merl will replace the selected map(s) with the chosen training pack(s).
+
+NOTE: when you click Replace, merl will attempt to backup the original map files before replacing them. It does this by moving the original file name to the same name with a .merl extention. IF YOU HAVE already replaced map files, it will "accidentally" backup those replaced files instead - if you click Revert for a map where this happened, it will revert back to those replaced maps, not the original one.
+
+# Uninstalling
+To uninstall merl, you can just delete the script or exe you downloaded.
+
+# Troubleshooting / Issues
+1. Help! my map isn't working anymore!
+- Rocket League probably updated. Just open merl and click Replace to reset your maps.
+2. not sure what else could go wrong?
+
+# License
+This software is released under the GPL v3.0
