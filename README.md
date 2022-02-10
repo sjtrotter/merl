@@ -56,7 +56,9 @@ To uninstall merl, you can just delete the script or exe you downloaded.
 # Troubleshooting / Issues
 1. Help! my map isn't working anymore!
   - Rocket League probably updated. Just open merl and click Replace to reset your maps.
-2. not sure what else could go wrong?
+2. Help! I can't see any files in the file chooser box!
+  - Check the file types in the bottom right-corner of the box, switch it to UPK, UDK, or ZIP as needed.
+3. not sure what else could go wrong? Let me know!
 
 # License
 This software is released under the GPL v3.0
