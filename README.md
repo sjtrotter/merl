@@ -14,7 +14,7 @@ This program uses [Semantic Versioning](http://semver.org)
  - [x] - Code to reset map settings 
  - [x] - Code to restore settings from mapper.txt
  - [x] - Code to save settings
- - [ ] - Code backup logic of original maps
+ - [x] - Code backup logic of original maps
  - [ ] - Code replace logic for UPK/UDK
  - [ ] - Code replace logic for ZIP file extract
  - [ ] - Code restore logic if map slot is empty
