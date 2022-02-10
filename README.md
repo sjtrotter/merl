@@ -28,6 +28,8 @@ If your install of Rocket League quits working after using this program, you sho
 # Installation
 If you have python installed on your computer, you should be able to download the source script and run it as-is.
 
+You may need to install the additional libraries `pillow` and `pypiwin32` with the command `pip install <library>` for each one (or `python -m pip install <library>`).
+
 If you do not, or are not sure, you should be able to download the merl.exe from the dist folder and run it.
 
 # Using merl
