@@ -7,6 +7,7 @@ This python script allows you to edit your Epic Games version of Rocket League L
 This program uses [Semantic Versioning](http://semver.org)
 
 # TODO
+ === \(50%\) ===
  - [x] - Write python Tkinter interface
  - [x] - Allow UPK/UDK file choosing
  - [x] - Allow ZIP file choosing
@@ -17,7 +18,7 @@ This program uses [Semantic Versioning](http://semver.org)
  - [ ] - Code replace logic for UPK/UDK
  - [ ] - Code replace logic for ZIP file extract
  - [ ] - Code restore logic if map slot is empty
- - \(50%\)Release: v0.5.0
+
 
 # Disclaimer
 This software comes with absolutely no warranty. Using this software as intended will replace files in your Rocket League installation directory, which has the potential to break your installation. Please be aware of this before using it. That said, many people use the method that this program uses to play custom maps, so it may be relatively safe to use.
