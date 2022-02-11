@@ -3,7 +3,7 @@ Map Editor for Rocket League
 
 This python script allows you to edit your Epic Games version of Rocket League Lab Maps to use custom training maps, gotten from Steam.
 
-# Version 0.6.0
+# Version 0.10.1
 This program uses [Semantic Versioning](http://semver.org)
 
 # TODO
@@ -15,9 +15,10 @@ This program uses [Semantic Versioning](http://semver.org)
  - [x] - Code to restore settings from mapper.txt
  - [x] - Code to save settings
  - [x] - Code backup logic of original maps
- - [ ] - Code replace logic for UPK/UDK
- - [ ] - Code replace logic for ZIP file extract
- - [ ] - Code restore logic if map slot is empty
+ - [x] - Code replace logic for UPK/UDK
+ - [x] - Code replace logic for ZIP file extract
+ - [x] - Code restore logic if map slot is empty
+ - [x] BUG - Save settings code only saving map settings loaded at beginning of session.
 
 
 # Disclaimer
