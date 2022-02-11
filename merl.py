@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from msilib.schema import Error
 import os
 import shutil
 import webbrowser
@@ -158,7 +157,7 @@ def saveSettings():
                     zf.close()
 
                     if count != 1:
-                        raise Error
+                        raise
 
                     for file in filenames[key]:
                         fullpath = path + "\\" + file
