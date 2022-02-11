@@ -1,0 +1,7 @@
+rldir|D:\Program Files\Epic Games\rocketleague
+Pillars|None
+Cosmic|None
+Double|None
+Underpass|None
+Utopia|None
+Octagon|None
