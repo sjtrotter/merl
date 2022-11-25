@@ -1,7 +1,7 @@
-rldir|D:\Program Files\Epic Games\rocketleague
+rldir|C:\Program Files\Epic Games\rocketleague
 Pillars|None
-Cosmic|D:/betty/Downloads/2611039001_intermediate_or_not_dribble_map.raw.download.zip
-Double|D:/betty/Downloads/821751580_parkour_map.raw.download.zip
-Underpass|D:/betty/Downloads/1906378036_aim_training_by_coco.raw.download.zip
-Utopia|D:/betty/Downloads/1671658424_speed_jump_rings_3_by_dmc.raw.download.zip
+Cosmic|None
+Double|None
+Underpass|None
+Utopia|C:/Users/steph/Downloads/Ice Ring;lhkj/Ice Rings/LethIceRings.udk
 Octagon|None
