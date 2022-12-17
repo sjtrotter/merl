@@ -235,7 +235,7 @@ def mainloop():
     root.title("Map Editor for Rocket League")
 
     mainframe = ttk.Frame(root)
-    mainframe.grid(column=0, row=0, sticky=(N,W,E,S))
+    mainframe.grid(column=0, row=0, sticky=("nsew"))
 
     for key in maps.keys():
         if maps[key] == "None":
