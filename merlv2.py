@@ -3,6 +3,8 @@
 import os
 import tkinter as tk
 from tkinter import ttk
+from tkinter import filedialog as fd
+from tkinter import messagebox as mb
 import shutil as sh
 import zipfile as zip
 import webbrowser as web
@@ -34,13 +36,13 @@ class Merl(tk.Frame):
         self.octagonImg = ImageTk.PhotoImage(Image.open("./images/png/octagon.png"))
         self.octagon_label = ttk.Label(self, image=self.octagonImg)
         
-        self.RLDir = tk.StringVar()
-        self.Pillars = tk.StringVar()
-        self.Cosmic = tk.StringVar()
-        self.Double = tk.StringVar()
-        self.Underpass = tk.StringVar()
-        self.Utopia = tk.StringVar()
-        self.Octagon = tk.StringVar()
+        self.RLDir = tk.StringVar(self, name="Rocket League Directory")
+        self.Pillars = tk.StringVar(self, name="Pillars Map")
+        self.Cosmic = tk.StringVar(self, name="Cosmic Map")
+        self.Double = tk.StringVar(self, name="Double Map")
+        self.Underpass = tk.StringVar(self, name="Underpass Map")
+        self.Utopia = tk.StringVar(self, name="Utopia Map")
+        self.Octagon = tk.StringVar(self, name="Octagon Map")
 
         self.rldir_entry = ttk.Entry(self, width=40, textvariable=self.RLDir)
         self.pillars_entry = ttk.Entry(self, width=30, textvariable=self.Pillars)
@@ -50,13 +52,13 @@ class Merl(tk.Frame):
         self.utopia_entry = ttk.Entry(self, width=30, textvariable=self.Utopia)
         self.octagon_entry = ttk.Entry(self, width=30, textvariable=self.Octagon)
 
-        self.rldir_browse = ttk.Button(self, width=10, text="Browse", padding=3, command=lambda: self.browseFiles(self.RLDir))
-        self.pillars_browse = ttk.Button(self, text="Browse", padding=3, command=lambda: self.browseFiles(self.RLDir))
-        self.cosmic_browse = ttk.Button(self, text="Browse", padding=3, command=lambda: self.browseFiles(self.RLDir))
-        self.double_browse = ttk.Button(self, text="Browse", padding=3, command=lambda: self.browseFiles(self.RLDir))
-        self.underpass_browse = ttk.Button(self, text="Browse", padding=3, command=lambda: self.browseFiles(self.RLDir))
-        self.utopia_browse = ttk.Button(self, text="Browse", padding=3, command=lambda: self.browseFiles(self.RLDir))
-        self.octagon_browse = ttk.Button(self, text="Browse", padding=3, command=lambda: self.browseFiles(self.RLDir))
+        self.rldir_browse = ttk.Button(self, width=10, text="Browse", padding=3, command=lambda: self.chooseDirectory(self.RLDir))
+        self.pillars_browse = ttk.Button(self, text="Browse", padding=3, command=lambda: self.browseFiles(self.Pillars))
+        self.cosmic_browse = ttk.Button(self, text="Browse", padding=3, command=lambda: self.browseFiles(self.Cosmic))
+        self.double_browse = ttk.Button(self, text="Browse", padding=3, command=lambda: self.browseFiles(self.Double))
+        self.underpass_browse = ttk.Button(self, text="Browse", padding=3, command=lambda: self.browseFiles(self.Underpass))
+        self.utopia_browse = ttk.Button(self, text="Browse", padding=3, command=lambda: self.browseFiles(self.Utopia))
+        self.octagon_browse = ttk.Button(self, text="Browse", padding=3, command=lambda: self.browseFiles(self.Octagon))
         self.clear_settings = ttk.Button(self, text="Clear Maps", padding=5, command=self.clearSettings)
         self.save_settings = ttk.Button(self, text="Save & Apply", padding=5, command=self.saveSettings)
 
@@ -92,8 +94,18 @@ class Merl(tk.Frame):
         self.clear_settings.grid(column=0, row=8, columnspan=2, sticky=(tk.E,tk.W))
         self.save_settings.grid(column=2, row=8, columnspan=2, sticky=(tk.E,tk.W))
 
+    def chooseDirectory(self, stringVar):
+        dirname = fd.askdirectory( initialdir=os.path.split(stringVar.get()),
+                                        title="Rocket League Directory")
+        if dirname != "":
+            stringVar.set(dirname)
+
     def browseFiles(self, stringVar):
-        pass
+        filename = fd.askopenfilename(  initialdir=os.path.split(stringVar.get()),
+                                            title="Select Map",
+                                            filetypes=(("Map Files", "*.upk *.udk"),
+                                                        ("ZIP Files", "*.zip")))
+        stringVar.set(filename)
 
     def saveSettings(self):
         pass
