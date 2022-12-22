@@ -12,12 +12,30 @@ from PIL import ImageTk,Image
 # import win32api as win
 
 
+global FILENAMES, RLDIR_RELPATH
+FILENAMES = {
+    "Pillars":  ["Labs_CirclePillars_P.upk"],
+    "Cosmic":   ["Labs_Cosmic_V4_P.upk", "Labs_Cosmic_P.upk"],
+    "Double":   ["Labs_DoubleGoal_V2_P.upk", "Labs_DoubleGoal_P.upk"],
+    "Underpass":["Labs_Underpass_P.upk", "Labs_Underpass_v0_p.upk"],
+    "Utopia":   ["Labs_Utopia_P.upk"],
+    "Octagon":  ["Labs_Octagon_02_P.upk","Labs_Octagon_P.upk"]
+}
+RLDIR_RELPATH = "\\TAGame\\CookedPCConsole\\"
+
+
+class SaveFileError(Exception):
+    pass
+
+
 class Merl(tk.Frame):
 
     def __init__(self, root):
+
+        # UI Elements
         tk.Frame.__init__(self)
         self.root = root
-        self.root.title("Map Ed")
+        self.root.title("Map Editor for Rocket League")
 
         self.grid(column=0,row=0,sticky=("nsew"))
 
@@ -36,13 +54,13 @@ class Merl(tk.Frame):
         self.octagonImg = ImageTk.PhotoImage(Image.open("./images/png/octagon.png"))
         self.octagon_label = ttk.Label(self, image=self.octagonImg)
         
-        self.RLDir = tk.StringVar(self, name="Rocket League Directory")
-        self.Pillars = tk.StringVar(self, name="Pillars Map")
-        self.Cosmic = tk.StringVar(self, name="Cosmic Map")
-        self.Double = tk.StringVar(self, name="Double Map")
-        self.Underpass = tk.StringVar(self, name="Underpass Map")
-        self.Utopia = tk.StringVar(self, name="Utopia Map")
-        self.Octagon = tk.StringVar(self, name="Octagon Map")
+        self.RLDir = tk.StringVar()
+        self.Pillars = tk.StringVar()
+        self.Cosmic = tk.StringVar()
+        self.Double = tk.StringVar()
+        self.Underpass = tk.StringVar()
+        self.Utopia = tk.StringVar()
+        self.Octagon = tk.StringVar()
 
         self.rldir_entry = ttk.Entry(self, width=40, textvariable=self.RLDir)
         self.pillars_entry = ttk.Entry(self, width=30, textvariable=self.Pillars)
@@ -94,24 +112,95 @@ class Merl(tk.Frame):
         self.clear_settings.grid(column=0, row=8, columnspan=2, sticky=(tk.E,tk.W))
         self.save_settings.grid(column=2, row=8, columnspan=2, sticky=(tk.E,tk.W))
 
+        # Program stuff
+        self.saveFile = "merl.maps"
+        self.maps = self.loadMaps(self.saveFile)
+
+
+
     def chooseDirectory(self, stringVar):
         dirname = fd.askdirectory( initialdir=os.path.split(stringVar.get()),
                                         title="Rocket League Directory")
         if dirname != "":
             stringVar.set(dirname)
+            return dirname
+
+        return None
 
     def browseFiles(self, stringVar):
         filename = fd.askopenfilename(  initialdir=os.path.split(stringVar.get()),
                                             title="Select Map",
-                                            filetypes=(("Map Files", "*.upk *.udk"),
+                                            filetypes=(("Map Files", "*.upk;*.udk"),
                                                         ("ZIP Files", "*.zip")))
-        stringVar.set(filename)
+        if filename != "":
+            stringVar.set(filename)
+            return filename
+
+        return None
 
     def saveSettings(self):
         pass
 
     def clearSettings(self):
         pass
+
+    def initMaps(self):
+
+        maps = {
+            "rldir": None,
+            "pillars": None,
+            "cosmic": None,
+            "double": None,
+            "underpass": None,
+            "utopia": None,
+            "octagon": None,
+        }
+
+        return maps
+
+    def saveMaps(self, saveFile, maps):
+        # validate?
+        # try:
+        #     for m in FILENAMES.keys():
+        #         if not os.path.isfile(maps[m]):
+        #             raise SaveDataError
+
+        # except SaveDataError:
+
+        pass
+
+
+    def loadMaps(self, saveFile):
+        maps = {}
+        save = False
+        if not os.path.isfile(saveFile):
+            maps = self.initMaps()
+            save = True
+        else:
+            # open save
+            with open(saveFile,'r') as f:
+                for line in f:
+                    k,v = line.strip().split("|")
+                    maps[k] = v
+                # validate
+                try:
+                    for dir in ["rldir","pillars","cosmic","double","underpass","utopia","octagon"]:
+                        if dir not in maps.keys():
+                            raise SaveFileError
+
+                    if len(maps.keys()) != len(FILENAMES.keys()+1):
+                        raise SaveFileError
+
+                except SaveFileError:
+                    mb.showinfo("Corrupt Save File","merl.maps is not valid.\nRe-initializing.")
+                    maps = self.initMaps()
+                    save = True
+            
+        if save:
+            self.saveMaps(saveFile, maps)
+        
+        return maps
+
 
 if __name__ == "__main__":
     root = tk.Tk()
