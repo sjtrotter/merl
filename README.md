@@ -8,6 +8,9 @@ It is currently considered to be in Alpha state.
 This program uses [Semantic Versioning](http://semver.org)
 
 # UPDATES
+
+2022-12-30 - Found this! http://rocketleaguemaps.us/
+
 2022-08-08 - It has come to my attention that the nice folks at [Steam Workshop Downloader](https://steamworkshopdownloader.io/) have stopped providing the download service, at the behest of Valve; this makes the original instructions invalid, since you can no longer download steam maps this way. However, there are map creators that provide their map files separately - one that I know of is [Lethamyr](https://lethamyr.com/mymaps).
 
 # TODO
