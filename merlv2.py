@@ -128,7 +128,8 @@ class Merl(tk.Frame):
         return None
 
     def browseFiles(self, stringVar):
-        filename = fd.askopenfilename(  initialdir=os.path.split(stringVar.get()),
+        print(stringVar.get())
+        filename = fd.askopenfilename(  initialdir=stringVar.get(),
                                             title="Select Map",
                                             filetypes=(("Map Files", "*.upk;*.udk"),
                                                         ("ZIP Files", "*.zip")))
