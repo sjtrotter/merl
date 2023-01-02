@@ -1,7 +1,0 @@
-rldir|C:\Program Files\Epic Games\rocketleague
-Pillars|None
-Cosmic|None
-Double|None
-Underpass|None
-Utopia|C:/Users/steph/Downloads/Ice Ring;lhkj/Ice Rings/LethIceRings.udk
-Octagon|None
