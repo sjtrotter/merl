@@ -3,20 +3,20 @@
 Map Editor for Rocket League (MERL)
 ===================================
 """
-VERSION = "0.10.1"
+VERSION = "1.7.0"
 """
  [x] Write python Tkinter interface
  [x] Allow UPK/UDK file choosing
  [x] Allow ZIP file choosing
- [ ] Code to reset map settings
- [ ] Code to restore settings from save file
- [ ] Code to save settings
- [ ] Code to backup original maps
- - Code replace logic for UPK/UDK
- - Code replace logic for ZIP file extract
- - Code restore logic if map slot is empty
+ [x] Code to reset map settings
+ [x] Code to restore settings from save file
+ [x] Code to save settings
+ [x] Code to backup original maps
+ [ ] Code logic for UPK/UDK
+ [ ] Code logic for ZIP file extract
+ [ ] Code logic to restore if map slot is empty
 """
-import os,json
+import os,json, logging
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
@@ -25,12 +25,17 @@ import shutil as sh
 import zipfile as zip
 import webbrowser as web
 from PIL import ImageTk, Image
-import win32api as win
 
 
 class Merl(tk.Frame):
     
     def __init__(self, root):
+        # set up logging
+        logging.basicConfig(filename="merl.log",
+                            format='%(asctime)s [%(levelname)s] %(message)s',
+                            level="INFO")
+
+        logging.info("Setting up interface...")
         tk.Frame.__init__(self)
         self.root = root
         self.root.title("Map Editor for Rocket League")
@@ -43,7 +48,7 @@ class Merl(tk.Frame):
             text="RL Folder (C:\\Program Files\\Epic Games\\rocketleague):")
         self.widgets["rldir-label"].grid(column=0, row=0, columnspan=3, sticky="nse")
         self.widgets["rldir-string"] = tk.StringVar()
-        self.widgets["rldir-entry"] = ttk.Entry(self, textvariable=self.widgets["rldir-string"], state="disabled")
+        self.widgets["rldir-entry"] = ttk.Entry(self, textvariable=self.widgets["rldir-string"], state="disabled", foreground="black")
         self.widgets["rldir-entry"].grid(column=3, row=0, columnspan=2, sticky="nsew")
         self.widgets["rldir-editimage"] = ImageTk.PhotoImage(Image.open("./images/png/edit_button-16.png"))
         self.widgets["rldir-button"] = ttk.Button(self, image=self.widgets["rldir-editimage"], padding=3, width=5, \
@@ -63,7 +68,7 @@ class Merl(tk.Frame):
             self.widgets[mapfile+"-label"] = ttk.Label(self, image=self.widgets[mapfile+"-image"])
             self.widgets[mapfile+"-label"].bind("<Button-1>", lambda e,mapfile=mapfile: self.browseFiles(mapfile))
             self.widgets[mapfile+"-string"]= tk.StringVar()
-            self.widgets[mapfile+"-entry"] = ttk.Entry(self, textvariable=self.widgets[mapfile+"-string"], state="disabled")
+            self.widgets[mapfile+"-entry"] = ttk.Entry(self, textvariable=self.widgets[mapfile+"-string"], state="disabled", foreground="black")
             self.widgets[mapfile+"-editimage"] = ImageTk.PhotoImage(Image.open("./images/png/edit_button-16.png"))
             self.widgets[mapfile+"-edit"]= ttk.Button(self, image=self.widgets[mapfile+"-editimage"], padding=3, width=5, \
                 command=lambda mapfile=mapfile: self.browseFiles(mapfile))
@@ -88,14 +93,16 @@ class Merl(tk.Frame):
         self.widgets["save-button"].grid(column=3, row=8, columnspan=3, sticky="we")
 
         # set RLDir relpath to maps
-        self.rldir_relpath = "TAGame/CookedPCConsole/"
+        self.rldir_relpath = "TAGame\\CookedPCConsole\\"
 
+        # initialize or load/verify settings
         if os.path.exists("./maps.merl"):
             self.settings = self.loadSettings()
         else:
             self.settings = self.initializeSettings()
 
         # set entryboxes to loaded settings
+        logging.info("Setting entrybox values...")
         for setting in self.settings.keys():
             if setting == "rldir-string":
                 self.widgets[setting].set(self.settings[setting])
@@ -106,6 +113,7 @@ class Merl(tk.Frame):
         
 
     def backupMaps(self):
+        logging.info("Backing up original maps...")
         filenames = ["Labs_CirclePillars_P.upk", "Labs_Cosmic_V4_P.upk", "Labs_Cosmic_P.upk", \
             "Labs_DoubleGoal_V2_P.upk", "Labs_DoubleGoal_P.upk", "Labs_Underpass_P.upk", \
             "Labs_Underpass_v0_p.upk", "Labs_Utopia_P.upk", "Labs_Octagon_02_P.upk","Labs_Octagon_P.upk"]
@@ -113,19 +121,26 @@ class Merl(tk.Frame):
         for f in filenames:
             fullpath = os.path.join(self.settings['rldir-string'],self.rldir_relpath,f)
             if os.path.exists(fullpath) and not os.path.exists(fullpath+".merl"):
+                logging.info(" - backing up "+fullpath+" to "+fullpath+".merl.")
                 sh.copyfile(fullpath,fullpath+".merl")
-
+            else:
+                logging.info(" - skipping "+fullpath+", "+fullpath+".merl already exists.")
+                
 
     def verifySettings(self, data):
+        logging.info("Verifying settings...")
         verified = True
         if len(data.keys()) != 7:
+            logging.warning(" - not enough keys in settings dictionary.")
             verified = False
 
         for string in data.keys():
             if string not in ["rldir-string", "pillars-string","cosmic-string","double-string","underpass-string","utopia-string","octagon-string"]:
+                logging.warning(" - Extra key '"+string+"' found in settings dictionary.")
                 verified = False
             else: # don't need to verify path if string isnt in the list.
                 if not self.verifyPath(data[string]):
+                    logging.info(" - Path not found: "+str(data[string])+" - setting to None.")
                     # instead of reinitializing for one bad path,
                     # just set to none
                     data[string] = None
@@ -138,15 +153,23 @@ class Merl(tk.Frame):
 
 
     def loadSettings(self):
+        logging.info("Loading settings from file...")
         with open("./maps.merl","r") as f:
             data = f.read()
 
-        data = json.loads(data)
+        try:
+            logging.info(" - loading json data.")
+            data = json.loads(data)
+        except:
+            logging.warning(" - could not load json data.")
+            mb.showinfo(title="Corrupted Save", message="Found corrupted save file. Re-initializing.")
+            return self.initializeSettings()
 
         return self.verifySettings(data)
 
 
     def initializeSettings(self):
+        logging.info("Initializing save data...")
         data = { "rldir-string": "C:\\Program Files\\Epic Games\\rocketleague" }
         for setting in ["pillars","cosmic","double","underpass","utopia","octagon"]:
             data[setting+"-string"] = None
@@ -155,23 +178,33 @@ class Merl(tk.Frame):
 
 
     def verifyPath(self, path):
+        logging.info("Verifying path: '"+str(path)+"'...")
         if path:
-            return os.path.exists(path)
+            if os.path.exists(path):
+                logging.info(" - path exists.")
+                return True
+            else:
+                logging.warning(" - path doesn't exist.")
+                return False
         else:
+            logging.warning(" - path doesn't exist.")
             return False
 
 
     def clearFiles(self, stringVar):
+        logging.info("Clearing map selection for "+stringVar.title()+".")
         self.widgets[stringVar+"-string"].set("")
         self.settings[stringVar+"-string"] = None
 
 
     def browseFiles(self, stringVar):
+        logging.info("Selecting map file...")
         filename = fd.askopenfilename(  initialdir=os.path.split(self.widgets[stringVar+'-string'].get())[0], \
                                         title="Select Map", \
                                         filetypes=(("Map Files", "*.upk *.udk"),
                                                     ("ZIP Files", "*.zip")))
 
+        logging.info(" - chose '"+filename+"'")
         if filename != "" and self.verifyPath(filename):
             self.widgets[stringVar+'-string'].set(os.path.split(filename)[1])
             self.settings[stringVar+'-string'] = filename
@@ -180,9 +213,11 @@ class Merl(tk.Frame):
 
 
     def chooseDirectory(self, stringVar):
+        logging.info("Selecting RL folder...")
         dirname = fd.askdirectory( initialdir=os.path.split(self.widgets[stringVar+"-string"].get()),
                                         title="Rocket League Directory")
 
+        logging.info(" - chose '"+dirname+"'")
         if dirname != "" and self.verifyRLPath(dirname):
             self.widgets[stringVar+'-string'].set(dirname)
             self.settings[stringVar+'-string'] = dirname
@@ -191,17 +226,18 @@ class Merl(tk.Frame):
 
 
     def verifyRLPath(self, dirname):
+        logging.info("Verifying RL folder...")
         verified = True
         if not self.verifyPath(dirname): verified = False; msg="Path does not exist."
         if len(dirname) < 12: verified = False; msg = "Directory path isn't long enough."
         if dirname[-12:] != "rocketleague": verified = False; msg = "Folder name is not 'rocketleague'"
-        print(dirname, self.rldir_relpath)
-        print(os.path.join(dirname, self.rldir_relpath))
         if not self.verifyPath(os.path.join(dirname,self.rldir_relpath)): verified = False; msg = "Folder '"+self.rldir_relpath+"' not found in directory."
 
         if not verified:
-            mb.showerror(title="Error", message=msg+"\nTry again. (Check C:\\Program Files\\Epic Games)")
+            logging.critical(" - problem with folder - "+msg)
+            mb.showerror(title="RL Folder Incorrect", message=msg+"\nTry again. (Check C:\\Program Files\\Epic Games)")
 
+        logging.info(" - verified.")
         return verified
 
 
@@ -210,18 +246,26 @@ class Merl(tk.Frame):
 
 
     def clearSettings(self):
+        logging.info("Clearing all map settings.")
         for string in self.settings.keys():
             if string != "rldir-string":
-                self.widgets[string].set(None)
+                self.clearFiles(string[:-7])
 
 
     def writeSaveFile(self):
-        with open("./maps.merl", "w") as f:
-            json.dump(self.settings, f)
+        logging.info("Writing save file...")
+        try:
+            with open("./maps.merl", "w") as f:
+                json.dump(self.settings, f)
+            logging.info(" - done.")
+        except:
+            logging.critical(" - could not write file.")
 
 
     def saveSettings(self):
+        logging.info("Saving settings...")
         if not self.confirmAction(title="Save & Apply?", message="Are you sure you want to save and apply maps?"):
+            logging.info(" - user cancelled.")
             return
         # backup original maps, if not yet backed up.
         self.backupMaps()
@@ -237,19 +281,22 @@ class Merl(tk.Frame):
             else:
                 self.widgets[string[:-7]+"-entry"].configure(foreground="black")
         if not verified:
+            logging.warning(" - settings could not be verified: "+notVerified.replace("\n",","))
             mb.showerror(title="Error", message="One or more chosen files does not exist:\n"+notVerified)
             return
-        # # direct-copy for upk/udk files (restore original for None's)
+        # check RL folder
+        if not self.verifyRLPath(self.settings["rldir-string"]):
+            self.widgets["rldir-entry"].configure(foreground="red")
+            return
+        else:
+            self.widgets["rldir-entry"].configure(foreground="black")
+        # direct-copy for upk/udk files (restore original for None's)
         # pass
-        # # unzip, copy upk/udk for zip files (restore original for None's)
+        # unzip, copy upk/udk for zip files (restore original for None's)
         # pass
-        # write chosen maps to self.settings
-        ## considering moving this to when it actually gets changed.
-        # for string in self.settings.keys():
-        #     self.settings[string] = self.widgets[string].get()
-
         # write self.settings to maps.merl
         self.writeSaveFile()
+
 
 root = tk.Tk()
 merl = Merl(root)
