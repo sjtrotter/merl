@@ -3,7 +3,7 @@
 Map Editor for Rocket League (MERL)
 ===================================
 """
-VERSION = "1.7.0"
+VERSION = "1.8.0"
 """
  [x] Write python Tkinter interface
  [x] Allow UPK/UDK file choosing
@@ -15,6 +15,7 @@ VERSION = "1.7.0"
  [ ] Code logic for UPK/UDK
  [ ] Code logic for ZIP file extract
  [ ] Code logic to restore if map slot is empty
+ [x] Implement logging
 """
 import os,json, logging
 import tkinter as tk
