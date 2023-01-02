@@ -4,10 +4,12 @@ Map Editor for Rocket League
 This python script allows you to edit your Epic Games version of Rocket League Lab Maps to use custom training maps, gotten from Steam.
 It is currently considered to be in Alpha state.
 
-# Version 0.10.1
+# Version 1.8.0
 This program uses [Semantic Versioning](http://semver.org)
 
 # UPDATES
+2023-01-01 - I found this! http://rocketleaguemaps.us/ and this new version updates the Map Download link to point there.
+
 2022-08-08 - It has come to my attention that the nice folks at [Steam Workshop Downloader](https://steamworkshopdownloader.io/) have stopped providing the download service, at the behest of Valve; this makes the original instructions invalid, since you can no longer download steam maps this way. However, there are map creators that provide their map files separately - one that I know of is [Lethamyr](https://lethamyr.com/mymaps).
 
 # TODO
