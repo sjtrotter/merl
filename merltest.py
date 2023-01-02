@@ -31,11 +31,6 @@ from PIL import ImageTk, Image
 class Merl(tk.Frame):
     
     def __init__(self, root):
-        # set up logging
-        logging.basicConfig(filename="merl.log",
-                            format='%(asctime)s [%(levelname)s] %(message)s',
-                            level="INFO")
-
         logging.info("Setting up interface...")
         tk.Frame.__init__(self)
         self.root = root
@@ -140,7 +135,7 @@ class Merl(tk.Frame):
                 logging.warning(" - Extra key '"+string+"' found in settings dictionary.")
                 verified = False
             else: # don't need to verify path if string isnt in the list.
-                if not self.verifyPath(data[string]):
+                if data[string] != None and not self.verifyPath(data[string]):
                     logging.info(" - Path not found: "+str(data[string])+" - setting to None.")
                     # instead of reinitializing for one bad path,
                     # just set to none
@@ -274,8 +269,8 @@ class Merl(tk.Frame):
         verified = True
         notVerified = ""
         for string in self.settings.keys():
-            if not self.verifyPath(self.settings[string]) and self.settings[string] != None \
-                and self.settings[string] != "":
+            if self.settings[string] != None and string != "rldir-string" \
+                and self.settings[string] != "" and not self.verifyPath(self.settings[string]):
                 verified = False
                 self.widgets[string[:-7]+"-entry"].configure(foreground="red")
                 notVerified += (string[:-7]+"\n").title()
@@ -299,6 +294,11 @@ class Merl(tk.Frame):
         self.writeSaveFile()
 
 
+# setting up logging
+logging.basicConfig(filename="merl.log",
+                    format='%(asctime)s [%(levelname)s] %(message)s',
+                    level="INFO")
 root = tk.Tk()
+logging.info("==================================STARTING=====================================")
 merl = Merl(root)
 root.mainloop()
