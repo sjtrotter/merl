@@ -135,13 +135,17 @@ class Merl(tk.Frame):
                 logging.warning(" - Extra key '"+string+"' found in settings dictionary.")
                 verified = False
             else: # don't need to verify path if string isnt in the list.
-                if data[string] != None and not self.verifyPath(data[string]):
+                if data[string] != None and string != "rldir-string" and not self.verifyPath(data[string]):
                     logging.info(" - Path not found: "+str(data[string])+" - setting to None.")
                     # instead of reinitializing for one bad path,
                     # just set to none
                     data[string] = None
+                elif string == "rldir-string" and not self.verifyRLPath(data[string],suppress=True):
+                    logging.critical(" - RL folder incorrect!")
+                    verified = False
 
         if not verified:
+            logging.warning(" - corrupted save file - re-initializing.")
             mb.showinfo(title="Corrupted Save", message="Found corrupted save file. Re-initializing.")
             return self.initializeSettings()
 
@@ -157,7 +161,7 @@ class Merl(tk.Frame):
             logging.info(" - loading json data.")
             data = json.loads(data)
         except:
-            logging.warning(" - could not load json data.")
+            logging.warning(" - could not load json data - re-initializing.")
             mb.showinfo(title="Corrupted Save", message="Found corrupted save file. Re-initializing.")
             return self.initializeSettings()
 
@@ -194,7 +198,7 @@ class Merl(tk.Frame):
 
 
     def browseFiles(self, stringVar):
-        logging.info("Selecting map file...")
+        logging.info("Selecting map file for "+stringVar.title()+"...")
         filename = fd.askopenfilename(  initialdir=os.path.split(self.widgets[stringVar+'-string'].get())[0], \
                                         title="Select Map", \
                                         filetypes=(("Map Files", "*.upk *.udk"),
@@ -217,11 +221,13 @@ class Merl(tk.Frame):
         if dirname != "" and self.verifyRLPath(dirname):
             self.widgets[stringVar+'-string'].set(dirname)
             self.settings[stringVar+'-string'] = dirname
+        elif dirname == "":
+            pass
         else:
             self.chooseDirectory("rldir")
 
 
-    def verifyRLPath(self, dirname):
+    def verifyRLPath(self, dirname, suppress=False):
         logging.info("Verifying RL folder...")
         verified = True
         if not self.verifyPath(dirname): verified = False; msg="Path does not exist."
@@ -231,9 +237,11 @@ class Merl(tk.Frame):
 
         if not verified:
             logging.critical(" - problem with folder - "+msg)
-            mb.showerror(title="RL Folder Incorrect", message=msg+"\nTry again. (Check C:\\Program Files\\Epic Games)")
+            verified = False
+            if not suppress:
+                mb.showerror(title="RL Folder Incorrect", message=msg+"\nTry again. (Check C:\\Program Files\\Epic Games)")
 
-        logging.info(" - verified.")
+        if verified: logging.info(" - verified.")
         return verified
 
 
@@ -294,11 +302,17 @@ class Merl(tk.Frame):
         self.writeSaveFile()
 
 
+# catch close, log end
+def windowExit():
+    logging.info("==================================   END   ================================")
+    root.destroy()
+
 # setting up logging
 logging.basicConfig(filename="merl.log",
                     format='%(asctime)s [%(levelname)s] %(message)s',
                     level="INFO")
 root = tk.Tk()
-logging.info("==================================STARTING=====================================")
+logging.info("================================= START UP ===============================")
+root.protocol("WM_DELETE_WINDOW", windowExit)
 merl = Merl(root)
 root.mainloop()
