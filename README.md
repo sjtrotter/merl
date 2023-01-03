@@ -1,15 +1,22 @@
 # merl
 Map Editor for Rocket League
 
-This python script allows you to edit your Epic Games version of Rocket League Lab Maps to use custom training maps, gotten from Steam.
+This python script allows you to edit your Epic Games version of Rocket League Lab Maps to use custom training maps, gotten from Steam (or other places).
 It is currently considered to be in Alpha state.
 
-# Version 0.10.1
+# Version 1.11.0
 This program uses [Semantic Versioning](http://semver.org)
 
 # UPDATES
 
-2022-12-30 - Found this! http://rocketleaguemaps.us/
+2023-01-02 - Major changes!
+- rewrote entire program to use OOP style Tkinter interface.
+- ENTIRE API is broken/updated - cannot use previous version save file. (You'll have to re-select your maps.)
+- Added logging to merl.log in the directory, rather than printing to console.
+- Entry boxes are now disabled - use the edit and trashcan buttons to select/remove files from the maps.
+- Attempting to make everything as modular as possible.
+
+2023-01-01 - I found this! http://rocketleaguemaps.us/ and this new version updates the Map Download link to point there.
 
 2022-08-08 - It has come to my attention that the nice folks at [Steam Workshop Downloader](https://steamworkshopdownloader.io/) have stopped providing the download service, at the behest of Valve; this makes the original instructions invalid, since you can no longer download steam maps this way. However, there are map creators that provide their map files separately - one that I know of is [Lethamyr](https://lethamyr.com/mymaps).
 
@@ -25,8 +32,7 @@ This program uses [Semantic Versioning](http://semver.org)
  - [x] - Code replace logic for UPK/UDK
  - [x] - Code replace logic for ZIP file extract
  - [x] - Code restore logic if map slot is empty
- - [x] BUG - Save settings code only saving map settings loaded at beginning of session.
-
+ - [x] - Added logging
 
 # Disclaimer
 This software comes with absolutely no warranty. Using this software as intended will replace files in your Rocket League installation directory, which has the potential to break your installation. Please be aware of this before using it. That said, many people use the method that this program uses to play custom maps, so it may be relatively safe to use.
@@ -65,7 +71,7 @@ NOTE: when you click Save & Apply, merl will attempt to backup the original map 
 To revert maps back to normal, clear the text box underneath it and click Save & Apply.
 
 # Files
-merl creates a small tracker text file linking the maps to the replacement files in the same directory it is located called `mapper.txt`
+merl creates a small tracker JSON file linking the maps to the replacement files in the same directory it is located called `maps.merl`. It also creates a log file called `merl.log` as well.
 
 # Uninstalling
 To uninstall merl, you can just delete the script folder. I'd recommend clearing maps and hitting Save & Apply first.
