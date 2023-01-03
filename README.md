@@ -8,6 +8,7 @@ It is currently considered to be in Alpha state.
 This program uses [Semantic Versioning](http://semver.org)
 
 # UPDATES
+
 2023-01-02 - Major changes!
 - rewrote entire program to use OOP style Tkinter interface.
 - ENTIRE API is broken/updated - cannot use previous version save file. (You'll have to re-select your maps.)
