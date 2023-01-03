@@ -71,7 +71,7 @@ NOTE: when you click Save & Apply, merl will attempt to backup the original map 
 To revert maps back to normal, clear the text box underneath it and click Save & Apply.
 
 # Files
-merl creates a small tracker text file linking the maps to the replacement files in the same directory it is located called `mapper.txt`
+merl creates a small tracker JSON file linking the maps to the replacement files in the same directory it is located called `maps.merl`. It also creates a log file called `merl.log` as well.
 
 # Uninstalling
 To uninstall merl, you can just delete the script folder. I'd recommend clearing maps and hitting Save & Apply first.
