@@ -88,8 +88,16 @@ class Merl(tk.Frame):
         self.widgets["clear-button"].grid(column=0, row=8, columnspan=3, sticky="we")
         self.widgets["save-button"].grid(column=3, row=8, columnspan=3, sticky="we")
 
-        # set RLDir relpath to maps
+        # set RLDir relpath, original filenames
         self.rldir_relpath = "TAGame\\CookedPCConsole\\"
+        self.original_filenames = {
+            "pillars":   ["Labs_CirclePillars_P.upk"],
+            "cosmic":    ["Labs_Cosmic_V4_P.upk", "Labs_Cosmic_P.upk"],
+            "double":    ["Labs_DoubleGoal_V2_P.upk", "Labs_DoubleGoal_P.upk"],
+            "underpass": ["Labs_Underpass_P.upk", "Labs_Underpass_v0_p.upk"],
+            "utopia":    ["Labs_Utopia_P.upk"],
+            "octagon":   ["Labs_Octagon_02_P.upk","Labs_Octagon_P.upk"]
+        }
 
         # initialize or load/verify settings
         if os.path.exists("./maps.merl"):
@@ -110,17 +118,15 @@ class Merl(tk.Frame):
 
     def backupMaps(self):
         logging.info("Backing up original maps...")
-        filenames = ["Labs_CirclePillars_P.upk", "Labs_Cosmic_V4_P.upk", "Labs_Cosmic_P.upk", \
-            "Labs_DoubleGoal_V2_P.upk", "Labs_DoubleGoal_P.upk", "Labs_Underpass_P.upk", \
-            "Labs_Underpass_v0_p.upk", "Labs_Utopia_P.upk", "Labs_Octagon_02_P.upk","Labs_Octagon_P.upk"]
-
-        for f in filenames:
-            fullpath = os.path.join(self.settings['rldir-string'],self.rldir_relpath,f)
-            if os.path.exists(fullpath) and not os.path.exists(fullpath+".merl"):
-                logging.info(" - backing up "+fullpath+" to "+fullpath+".merl.")
-                sh.copyfile(fullpath,fullpath+".merl")
-            else:
-                logging.info(" - skipping "+fullpath+", "+fullpath+".merl already exists.")
+        # original filenames set above
+        for lst in self.original_filenames.keys():
+            for f in self.original_filenames[lst]:
+                fullpath = os.path.join(self.settings['rldir-string'],self.rldir_relpath,f)
+                if os.path.exists(fullpath) and not os.path.exists(fullpath+".merl"):
+                    logging.info(" - backing up "+fullpath+" to "+fullpath+".merl.")
+                    sh.copyfile(fullpath,fullpath+".merl")
+                else:
+                    logging.info(" - skipping "+fullpath+", "+fullpath+".merl already exists.")
                 
 
     def verifySettings(self, data):
@@ -294,12 +300,94 @@ class Merl(tk.Frame):
             return
         else:
             self.widgets["rldir-entry"].configure(foreground="black")
-        # direct-copy for upk/udk files (restore original for None's)
-        # pass
-        # unzip, copy upk/udk for zip files (restore original for None's)
-        # pass
-        # write self.settings to maps.merl
-        self.writeSaveFile()
+        # direct copy for upk/udk files
+        # unzip, copy upk/udk for zip files
+        # restore original for None's
+        changes = set()
+        error = False
+        for string in self.settings.keys():
+            # restore original for None's
+            if self.settings[string] == None:
+                logging.info(" - reverting "+string[:-7].title()+"...")
+                for f in self.original_filenames[string[:-7]]:
+                    fullpath = os.path.join(self.settings['rldir-string'],self.rldir_relpath,f)
+                    try:
+                        sh.copyfile(fullpath+".merl", fullpath)
+                        changes.add(" - Reverted "+string[:-7].title()+" to original")
+                        logging.info(" - success.")
+                    except:
+                        error = True
+                        changes.add(" - Error: couldn't revert "+string[:-7].title())
+                        logging.critical(" - couldn't restore "+f+".merl")
+
+            # direct copy for upk/udk
+            elif self.settings[string][-4:].lower() == ".upk" \
+                or self.settings[string][-4:].lower() == ".udk":
+                logging.info(" - copy udk/upk file for "+string[:-7].title()+"...")
+                for f in self.original_filenames[string[:-7]]:
+                    fullpath = os.path.join(self.settings['rldir-string'],self.rldir_relpath,f)
+                    try:
+                        sh.copyfile(self.settings[string],fullpath)
+                        changes.add(" - Copied "+os.path.split(self.settings[string])[1][:-4]+" to "+string[:-7].title())
+                        logging.info(" - success.")
+                    except:
+                        error = True
+                        changes.add(" - Error: couldn't copy "+os.path.split(self.settings[string])[1][:-4]+" to "+string[:-7].title())
+                        logging.critical(" - couldn't copy "+self.settings[string]+" to "+string[:-7].title())
+
+            # unzip, extract upk/udk for zip
+            elif self.settings[string][-4:].lower() == ".zip":
+                logging.info(" - extracting from "+self.settings[string]+" for "+string[:-7].title()+"...")
+                zipfile = zip.ZipFile(self.settings[string])
+                upkUdkFiles = []
+                count = 0
+                for f in zipfile.namelist():
+                    if f[-4:].lower() == ".upk" or f[-4:].lower() == ".udk":
+                        upkUdkFiles.append(f)
+                        count += 1
+                if count == 0:
+                    zipfile.close()
+                    changes.add(" - Error: no udk/upk file in "+self.settings[string]+" for "+string[:-7])
+                    logging.critical(" - no upk/udk files in archive "+self.settings[string]+" for "+string[:-7])
+                    error = True
+                elif count > 1:
+                    zipfile.close()
+                    changes.add(" - Error: more than one upk/udk file in "+self.settings[string]+" for "+string[:-7]+" - extract and select the one you want.")
+                    logging.critical(" - more than one upk/udk file in "+self.settings[string]+" for "+string[:-7])
+                    error = True
+                elif count == 1:
+                    # exactly one upk or udk file present. extract, then copy it over.
+                    zipfile.extract(upkUdkFiles[0])
+                    zipfile.close()
+                    zipPath = "./"+upkUdkFiles[0]
+                    for f in self.original_filenames[string[:-7]]:
+                        fullpath = os.path.join(self.settings['rldir-string'],self.rldir_relpath,f)
+                        try:
+                            sh.copyfile(zipPath,fullpath)
+                            changes.add(" - Extracted and copied "+upkUdkFiles[0]+" from "+os.path.split(self.settings[string])[1][:-4]+" to "+string[:-7].title())
+                            logging.info(" - success.")
+                        except:
+                            error = True
+                            changes.add(" - Error: couldn't extract/copy from "+os.path.split(self.settings[string])[1][:-4]+" to "+string[:-7].title())
+                            logging.critical(" - couldn't copy "+upkUdkFiles[0]+" from "+self.settings[string]+" to "+string[:-7].title())
+                    os.remove(zipPath)
+
+            elif string != "rldir-string":
+                error = True
+                logging.critical(" - unknown file format in "+string[:7].title()+": *"+self.settings[string][-4:])
+                changes.add(" - Error: uknown file format selected for "+string[:-7].title())
+
+        if error:
+            mb.showerror(title="Error Applying Settings", \
+                message="There was some error applying your settings. Check merl.log for more info.\nHere's a list of changes:\n"+"\n".join(changes)+"\n\nYour map selections have NOT been saved.")
+            return                
+        else:
+            # write self.settings to maps.merl
+            self.writeSaveFile()
+            mb.showinfo(title="Save & Apply Successful", \
+                message="Settings saved & applied successfully!\nHere's a list of changes:\n"+"\n".join(changes)+"\n\nSettings have been saved!")
+        
+        logging.info(" - Save & Apply successful.")
 
 
 # catch close, log end
